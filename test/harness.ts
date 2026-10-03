@@ -238,7 +238,9 @@ export async function harness(
     process.env.PI_CODEBUFFER = JSON.stringify({
       ...JSON.parse(previousConfig ?? "{}"),
       scratchDirectory: join(dir, "scratch"),
-      hideRawCodemode: options.hideRaw ?? false,
+      ...(options.daily && options.hideRaw === undefined
+        ? {}
+        : { hideRawCodemode: options.hideRaw ?? false }),
     });
     try {
       await loader.reload();

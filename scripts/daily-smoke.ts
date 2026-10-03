@@ -38,17 +38,24 @@ try {
     edits: [{ start: 0, end: 5, text: "delta" }],
   });
   await call("write", { path: "created.txt", content: "native" });
-  await call("codemode", {
-    code: 'text(await tools.edit({path:"smoke.txt",format:"replace",edits:[{old:"delta",replacement:"nested"}]}));',
+  await call("codebuffer", {
+    code: 'return tools.edit({path:"smoke.txt",format:"replace",edits:[{old:"delta",replacement:"nested"}]});',
   });
   await call("codebuffer", {
-    action: "exec",
-    source:
-      'const result=await Promise.all([tools.read({path:"created.txt"}),tools.read({path:"smoke.txt"})]);text(result);',
+    code: 'return Promise.all([tools.read({path:"created.txt"}),tools.read({path:"smoke.txt"})]);',
+  });
+  await call("workflow", {
+    run: ["printf", "workflow-ok"],
+    cwd: h.dir,
+    route: "direct",
+  });
+  await call("todo", {
+    action: "create",
+    subject: "Installed stack smoke",
+    description: "Checkpoint: deterministic smoke; verify session reopen next",
   });
   const failed = await h.call(s, {
-    action: "exec",
-    source: 'text("before");throw Error("expected failure");',
+    code: 'text("before");throw Error("expected failure");',
   });
   assert.equal(failed.isError, true);
   const metadata = jsonOf(failed);
@@ -71,6 +78,10 @@ try {
       ],
     },
   });
+  assert.match(
+    textOf(await call("todo", { action: "list" })),
+    /Installed stack smoke/,
+  );
   const result = await h.call(s, { command: "exit 7" }, "bash");
   assert.equal(result.isError, true);
   const p = h.payloads.at(-1)!;
@@ -84,11 +95,15 @@ try {
     "bash",
     "edit",
     "write",
-    "codemode",
+    "workflow",
+    "todo",
     "codebuffer",
   ])
     assert(names.includes(n), n);
   assert.equal(names.filter((n) => n === "edit").length, 1);
+  assert.equal(new Set(names).size, names.length);
+  assert(!names.includes("codemode"));
+  assert(!names.includes("ask_user_question")); // hidden without an interactive UI
   assert.match(
     declarations.find((t) => t.name === "edit")!.description,
     /Strict single-file/,
@@ -101,7 +116,7 @@ try {
     toolDeclarationBytes: Buffer.byteLength(JSON.stringify(declarations)),
     systemBytes: Buffer.byteLength(s.systemPrompt),
     codemodeDescriptionBytes: Buffer.byteLength(
-      declarations.find((t) => t.name === "codemode")!.description,
+      declarations.find((t) => t.name === "codemode")?.description ?? "",
     ),
     editSchemaBytes: Buffer.byteLength(
       JSON.stringify(declarations.find((t) => t.name === "edit")),
