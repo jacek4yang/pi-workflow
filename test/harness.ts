@@ -1,11 +1,12 @@
 import assert from "node:assert/strict";
-import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { mkdtempSync, rmSync, writeFileSync, readFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { createServer } from "node:http";
 import { once } from "node:events";
 import { zstdDecompressSync } from "node:zlib";
 import {
+  getAgentDir,
   createAgentSession,
   createCodemodeExtension,
   DefaultResourceLoader,
@@ -29,6 +30,10 @@ export async function harness(
     extension?: boolean;
     models?: boolean;
     paths?: string[];
+    daily?: boolean;
+    mode?: "on" | "only";
+    inlineBudget?: number;
+    hideRaw?: boolean;
   } = {},
 ) {
   const dir = mkdtempSync(join(tmpdir(), "codebuffer-sdk-"));
@@ -159,49 +164,71 @@ export async function harness(
     modelsPath: join(dir, "config.json"),
     modelsStorePath: join(dir, "models.json"),
   });
-  const settings = SettingsManager.inMemory({
-    compaction: { enabled: false, keepRecentTokens: 0, reserveTokens: 1000 },
-    transport: "sse",
-  });
+  const settings = SettingsManager.inMemory(
+    options.daily
+      ? JSON.parse(readFileSync(join(getAgentDir(), "settings.json"), "utf8"))
+      : {
+          codemode: {
+            mode: options.mode ?? "on",
+            inlineBudget: options.inlineBudget ?? 0,
+          },
+          compaction: {
+            enabled: false,
+            keepRecentTokens: 0,
+            reserveTokens: 1000,
+          },
+          transport: "sse",
+        },
+  );
   const sessions: AgentSession[] = [];
   async function make(manager = SessionManager.create(dir, dir)) {
     const loader = new DefaultResourceLoader({
       cwd: dir,
-      agentDir: dir,
+      agentDir: options.daily ? getAgentDir() : dir,
       settingsManager: settings,
-      noExtensions: true,
+      noExtensions: !options.daily,
       noSkills: true,
       noPromptTemplates: true,
       noThemes: true,
-      noContextFiles: true,
-      additionalExtensionPaths: [
-        ...(options.paths ?? [
-          process.env.PI_WORKFLOW_TEST_EXTENSION ?? resolve("index.ts"),
-        ]),
-        ...(options.companionsFirst
-          ? [options.companion, options.generation].filter(
-              (p): p is string => !!p,
-            )
-          : []),
-        ...(options.extension === false
-          ? []
-          : [
-              process.env.PI_CODEBUFFER_TEST_EXTENSION ??
-                resolve("node_modules/pi-codebuffer/index.ts"),
+      noContextFiles: !options.daily,
+      additionalExtensionPaths: options.daily
+        ? []
+        : [
+            ...(options.paths ?? [
+              process.env.PI_WORKFLOW_TEST_EXTENSION ?? resolve("index.ts"),
             ]),
-        ...(!options.companionsFirst
-          ? [options.companion, options.generation].filter(
-              (p): p is string => !!p,
-            )
-          : []),
-      ],
+            ...(options.companionsFirst
+              ? [options.companion, options.generation].filter(
+                  (p): p is string => !!p,
+                )
+              : []),
+            ...(options.extension === false
+              ? []
+              : [
+                  process.env.PI_CODEBUFFER_TEST_EXTENSION ??
+                    resolve("node_modules/pi-codebuffer/index.ts"),
+                ]),
+            ...(!options.companionsFirst
+              ? [options.companion, options.generation].filter(
+                  (p): p is string => !!p,
+                )
+              : []),
+          ],
       extensionFactories: [
         ...(options.builtin === false
           ? []
-          : [createCodemodeExtension({ mode: "on", models: options.models })]),
+          : [
+              createCodemodeExtension({
+                mode: options.mode ?? (options.daily ? undefined : "on"),
+                inlineBudget: options.inlineBudget,
+                models: options.models,
+              }),
+            ]),
         ...(options.factories ?? []),
       ],
-      systemPrompt: "Local deterministic extension test.",
+      systemPrompt: options.daily
+        ? undefined
+        : "Local deterministic extension test.",
     });
     const previousConfig = process.env.PI_CODEBUFFER;
     const previousRecovery = process.env.PI_GENERATION_RECOVERY_DIR;
@@ -209,7 +236,7 @@ export async function harness(
     process.env.PI_CODEBUFFER = JSON.stringify({
       ...JSON.parse(previousConfig ?? "{}"),
       scratchDirectory: join(dir, "scratch"),
-      hideRawCodemode: false,
+      hideRawCodemode: options.hideRaw ?? false,
     });
     try {
       await loader.reload();
