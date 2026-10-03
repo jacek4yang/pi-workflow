@@ -1,8 +1,8 @@
 {
   "name": "pi-workflow",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "type": "module",
-  "description": "Strict single-file Edit IR tools for Pi",
+  "description": "Strict editing and compact policy-visible CLI workflows for Pi",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -27,6 +27,7 @@
     "docs"
   ],
   "scripts": {
+    "smoke:install": "tsx scripts/smoke.ts",
     "check": "tsc --noEmit && tsx --test test/*.test.ts",
     "test": "tsx --test test/*.test.ts",
     "format": "prettier --write .",

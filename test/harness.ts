@@ -16,6 +16,7 @@ import {
   type AgentSession,
   type ExtensionFactory,
   type AgentToolResult,
+  type ExtensionUIContext,
 } from "@earendil-works/pi-coding-agent";
 import { InMemoryCredentialStore } from "@earendil-works/pi-ai";
 import { getModel } from "@earendil-works/pi-ai/compat";
@@ -34,6 +35,7 @@ export async function harness(
     mode?: "on" | "only";
     inlineBudget?: number;
     hideRaw?: boolean;
+    uiContext?: ExtensionUIContext;
   } = {},
 ) {
   const dir = mkdtempSync(join(tmpdir(), "codebuffer-sdk-"));
@@ -259,6 +261,7 @@ export async function harness(
     });
     sessions.push(session);
     await session.bindExtensions({
+      uiContext: options.uiContext,
       onError: (e) => {
         throw new Error(JSON.stringify(e));
       },

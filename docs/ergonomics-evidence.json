@@ -1,0 +1,121 @@
+{
+  "sessionAudit": {
+    "windowDays": 7,
+    "sessions": 20,
+    "assistantToolCalls": 3367,
+    "argumentBytes": 7543604,
+    "duplicateEntries": 193,
+    "tools": {
+      "codemode": 2716,
+      "codebuffer": 561,
+      "bash": 29,
+      "read": 15,
+      "find": 3,
+      "edit": 25,
+      "write": 13,
+      "context_prune": 3,
+      "grep": 2
+    },
+    "codebufferActions": {
+      "create": 92,
+      "run": 209,
+      "patch": 136,
+      "read": 1,
+      "exec": 111,
+      "repair": 11,
+      "status": 1
+    },
+    "shell": {
+      "commands": 3200,
+      "cdPrefixes": 196,
+      "cdPrefixBytes": 9297,
+      "proxyCommands": 866,
+      "proxyAssignmentBytes": 78490,
+      "logTailWrappers": 324,
+      "git": 1111,
+      "gh": 601,
+      "npm": 335,
+      "python": 1116,
+      "rust": 250,
+      "ghOperations": {
+        "api": 105,
+        "repo": 13,
+        "pr": 263,
+        "run": 230,
+        "release": 19,
+        "issue": 41
+      },
+      "gitOperations": {
+        "status": 424,
+        "diff": 546,
+        "add": 172,
+        "commit": 156,
+        "push": 97,
+        "rev-parse": 154,
+        "tag": 12,
+        "switch": 62,
+        "log": 86,
+        "fetch": 32,
+        "pull": 2,
+        "ls-files": 70,
+        "clone": 2,
+        "merge": 26,
+        "checkout": 9,
+        "restore": 2
+      },
+      "pythonOperations": {
+        "inline": 584,
+        "module": 362,
+        "pip": 24,
+        "venv": 575,
+        "pytest": 296,
+        "uv": 6,
+        "ruff": 89
+      },
+      "rustOperations": {
+        "build": 22,
+        "test": 102,
+        "check": 17,
+        "fmt": 71,
+        "clippy": 41,
+        "metadata": 4,
+        "run": 3,
+        "update": 1
+      }
+    },
+    "scripts": {
+      "count": 2919,
+      "bytes": 6879186,
+      "textAwaitTools": 9981,
+      "returnTools": 0,
+      "parseFailures": 79
+    },
+    "errors": 0
+  },
+  "benchmark": {
+    "before": {
+      "fixtureToolCalls": 8,
+      "argumentBytes": 824,
+      "resultBytes": 1695,
+      "providerRequests": 16,
+      "providerRequestBytes": 181175,
+      "systemPromptBytes": 76,
+      "toolDeclarationBytes": 8593,
+      "tools": ["read", "bash", "edit", "write", "codebuffer", "codemode"],
+      "codemodeDescriptionBytes": 1031,
+      "note": "Deterministic real-SDK provider fixture; bytes only, no live reasoning/usage/cost claims; excludes optional ask/todo declarations"
+    },
+    "after": {
+      "fixtureToolCalls": 8,
+      "argumentBytes": 596,
+      "resultBytes": 1624,
+      "providerRequests": 16,
+      "providerRequestBytes": 175266,
+      "systemPromptBytes": 76,
+      "toolDeclarationBytes": 8371,
+      "tools": ["read", "bash", "edit", "write", "workflow", "codebuffer"],
+      "codemodeDescriptionBytes": 0,
+      "note": "Deterministic real-SDK provider fixture; bytes only, no live reasoning/usage/cost claims; excludes optional ask/todo declarations"
+    }
+  }
+}
