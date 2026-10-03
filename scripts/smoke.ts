@@ -23,15 +23,25 @@ try {
       "install",
       "--ignore-scripts",
       "--allow-git=all",
-      resolve(process.argv[2] ?? "pi-workflow-0.1.0.tgz"),
+      resolve(
+        process.argv[2] ??
+          `pi-workflow-${JSON.parse(readFileSync("package.json", "utf8")).version}.tgz`,
+      ),
       "@earendil-works/pi-coding-agent@1.0.0",
       "typebox@1.3.27",
     ],
     home,
   );
+  for (const file of ["index.ts", "src/run.ts"]) {
+    if (
+      readFileSync(join(home, "node_modules/pi-workflow", file), "utf8") !==
+      readFileSync(file, "utf8")
+    )
+      throw new Error(`Stale tarball: ${file}; run npm pack again`);
+  }
   run(
     "node",
-    ["--import", "tsx", "--test", "test/sdk.test.ts"],
+    ["--import", "tsx", "--test", "test/sdk.test.ts", "test/run.test.ts"],
     process.cwd(),
     {
       ...process.env,

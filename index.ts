@@ -3,7 +3,9 @@ import { Text } from "@earendil-works/pi-tui";
 import { Type } from "typebox";
 import { schema, prepare } from "./src/schema.js";
 import { edit } from "./src/edit.js";
+import { registerRun } from "./src/run.js";
 export default function workflow(pi: ExtensionAPI) {
+  registerRun(pi);
   pi.registerTool({
     name: "edit",
     label: "edit",
