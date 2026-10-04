@@ -1,5 +1,7 @@
 # pi-workflow: strict edit and compact execution
 
+Pi host peers are unrestricted (`*`). Users control host upgrades; required API/safety checks remain. Dev/CI versions pin reproducible tests, not runtime support. Untested versions are not guaranteed compatible.
+
 Two compact tools for Pi 1.0.2 / Node 24: strict single-file `edit` and literal-argv `workflow` execution. **Native write is unchanged.** No project DSL, automatic dependency installation, retry loop or workspace transactions.
 
 ```sh
