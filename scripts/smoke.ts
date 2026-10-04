@@ -27,7 +27,7 @@ try {
         process.argv[2] ??
           `pi-workflow-${JSON.parse(readFileSync("package.json", "utf8")).version}.tgz`,
       ),
-      "@earendil-works/pi-coding-agent@1.0.1",
+      "@earendil-works/pi-coding-agent@1.0.2",
       "typebox@1.3.27",
     ],
     home,
