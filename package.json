@@ -1,6 +1,6 @@
 {
   "name": "pi-workflow",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "type": "module",
   "description": "Strict editing and compact policy-visible CLI workflows for Pi",
   "license": "MIT",
@@ -37,14 +37,14 @@
     "pi-codebuffer": "git+https://github.com/jacek4yang/pi-codebuffer.git"
   },
   "peerDependencies": {
-    "@earendil-works/pi-coding-agent": "1.0.1",
-    "@earendil-works/pi-tui": "1.0.1",
+    "@earendil-works/pi-coding-agent": "~1.0.2",
+    "@earendil-works/pi-tui": "~1.0.2",
     "typebox": "*"
   },
   "devDependencies": {
-    "@earendil-works/pi-coding-agent": "1.0.1",
-    "@earendil-works/pi-ai": "1.0.1",
-    "@earendil-works/pi-tui": "1.0.1",
+    "@earendil-works/pi-coding-agent": "1.0.2",
+    "@earendil-works/pi-ai": "1.0.2",
+    "@earendil-works/pi-tui": "1.0.2",
     "@types/node": "^24.0.0",
     "tsx": "^4.20.0",
     "typescript": "^5.9.0",

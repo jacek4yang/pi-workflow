@@ -1,6 +1,6 @@
 # pi-workflow: strict edit and compact execution
 
-Two compact tools for Pi 1.0.1 / Node 24: strict single-file `edit` and literal-argv `workflow` execution. **Native write is unchanged.** No project DSL, automatic dependency installation, retry loop or workspace transactions.
+Two compact tools for Pi 1.0.2 / Node 24: strict single-file `edit` and literal-argv `workflow` execution. **Native write is unchanged.** No project DSL, automatic dependency installation, retry loop or workspace transactions.
 
 ```sh
 pi install git:github.com/jacek4yang/pi-workflow
